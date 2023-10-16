@@ -84,3 +84,30 @@ int main(){
 	printf("\nYhanks for playing! Adios\n");
 
 }
+
+
+
+int get_player_data(){
+	int fd, uid, read_bytes;
+	struct user entry;
+
+	uid = getuid();
+
+	fd = open(DATAFILE, O_RDONLY);
+
+	if(fd == -1)
+		return -1;
+	
+	read_bytes = read(fd, &entry, sizeof(struct user));
+	while(entry.uid != uid && read_bytes > 0){
+		read_bytes = read(fd, &entry, sizeof(struct user));
+	}
+	close(fd);
+	if(read_bytes < sizeof(struct user))
+		return -1;
+	else
+		player = entry;
+
+	return 1;
+	
+}
