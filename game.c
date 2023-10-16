@@ -111,3 +111,23 @@ int get_player_data(){
 	return 1;
 	
 }
+
+
+
+void register_new_player(){
+	int fd;
+
+	printf("***New player registration***\n");
+	printf("Please enter your name: \n");
+	input_name();
+
+	fd = open(DATAFILE, O_WRONLY|O_CREAT|O_APPEND, S_IRUSR|S_IWUSR);
+	if(fd == -1)
+		fatal("in register_new_player() while opening file");
+	write(fd, &player, sizeof(struct user));
+	close(fd);
+
+	printf("***Welcome to the Game of Chance***\n");
+	printf("You have been given %u credits.\n", player.credits);
+
+}
