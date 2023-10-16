@@ -21,6 +21,12 @@ struct user{
 
 int get_player_data();
 void register_new_player();
+int pick_a_number();
+int dealer_no_match();
+int find_the_ace();
+void show_highscore();
+void input_name();
+void update_player_data();
 
 
 
@@ -37,5 +43,44 @@ int main(){
 	if(get_player_data()==-1)
 		register_new_player();
 
+
+	while(choice != 7){
+		printf("1. Play the pick a number game.\n");
+		printf("2. Play the no match dealer game.\n");
+		printf("3. Play the find the ace game.\n");
+		printf("4. View current highscore.\n");
+		printf("5. Change user name.\n");
+		printf("6. Reset the account at 100 credits.\n");
+		printf("7. Quit!\n");
+		printf("Player Name: %s\n", player.name);
+		printf("[You have %u credits] -> ", player.credits);
+		scanf("%d", &choice);
+	
+
+		if((choice < 1 || choice > 7))
+			printf("\n Error: The entered number %d is an invalid selection.\n\n", choice);
+		else if(choice < 4){
+			if(choice == 1)
+				player.current_game = pick_a_number;
+			else if(choice == 2)
+				player.current_game = dealer_no_match;
+			else 
+				player.current_game = find_the_ace;
+			last_game = choice;	
+		}
+		else if(choice == 4)
+			show_highscore();
+		else if(choice == 5){
+			printf("\nChange user name\n");
+			printf("Enter your new name: ");
+			input_name();
+			printf("Your name has been changed.\n\n");
+		}
+		else if(choice == 6)
+			printf("\nYour account has been reset with 100 credits.\n\n");
+			player.credits = 100;
+	}
+	update_player_data();
+	printf("\nYhanks for playing! Adios\n");
 
 }
