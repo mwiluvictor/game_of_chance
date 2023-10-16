@@ -86,7 +86,7 @@ int main(){
 }
 
 
-
+//this function reads the player data for the current uid.
 int get_player_data(){
 	int fd, uid, read_bytes;
 	struct user entry;
@@ -113,7 +113,7 @@ int get_player_data(){
 }
 
 
-
+//this function registers a new player with no prior data and creates a new player account.
 void register_new_player(){
 	int fd;
 
