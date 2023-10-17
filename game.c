@@ -201,7 +201,7 @@ void input_name(){
 
 
 
-//this function is the Pick a Number game.
+//this is the Pick a Number game.
 int pick_a_number(){
 	int pick, winning_number;
 
@@ -236,3 +236,50 @@ void jackpot(){
 	printf("You have won the jackpot of 100 credits.\n");
 	player.credits += 100;
 } 
+
+
+
+//this is the No Match Dealer game.
+int dealer_no_match(){
+	int i, j, wager = -1, match =-1;
+
+	printf("\n::::::: No Match Dealer :::::::\n");
+	printf("In this game, you can wager up to all of your credits.\n");
+	printf("The dealer will deal out 16 random numbers between 0 and 99.\n");
+	printf("If there are no matches among them, you double your money!\n\n");
+
+	if(player.credits == 0){
+		printf("You don't any credits to wager!\n");
+		return -1;
+	}
+	while(wager == -1)
+		wager = take_wager(player.credits, 0);
+
+	printf("\t\t::: Dealing out 16 random numbers :::\n");
+	for(i=0; i < 16; i++){
+		numbers[i] = rand() % 100;
+		printf("%2d\t, numbers[i]");
+		if(i%8 == 7)
+			printf("\n");
+	}
+	for(i=0; i < 15; i++){
+		j = i +1;
+		while(j < 16){
+			if(numbers[i] == numbers[j]
+				match = numbers[i];
+			j++;
+		}
+	}
+	if(match != -1){
+		printf("The dealer matched the number %d!\n", match);
+		printf("You lose %d credits.\n", wager);
+		player.credits -= wager;
+	}else {
+		printf("There were no matches! You win %d credits!\n", wager);
+		player.credits += wager;
+	}
+	return 0;
+}
+
+
+
