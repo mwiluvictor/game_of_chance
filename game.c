@@ -29,6 +29,7 @@ void input_name();
 void update_player_data();
 void jackpot();
 int take_wager(int, int);
+void play_the_game();
 
 
 //Global Variable
@@ -389,4 +390,32 @@ int take_wager(int available_credits, int previous_wager){
 		return -1;
 	}
 	return wager;
+}
+
+
+
+//this function contains a loop to allow the current game to be played again.
+void play_the_game(){
+	int play_again = 1;
+	int(*game)();
+	char selection;
+
+	while(play_again){
+		printf("\n[DEBUG] current_game pointer @ 0x%08x\n", player.current_game);
+		if(player.current_game() != -1){
+			if(player.credits > player.highscore)
+				player.highscore = player.credits;
+			printf("\nYou now have %u credits\n", player.credits);
+			update_player_data();
+			printf("Would you like to play again? (y/n) ");
+			selection = '\n';
+			while(selection == '\n')
+				scanf("%c", &selection);
+			if(selection == 'n')
+				play_again = 0;
+		}
+		else
+			play_again = 0;
+	}
+
 }
