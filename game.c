@@ -183,4 +183,17 @@ void show_highscore(){
 }
 
 
+//this funcion is used to input the player name.
+void input_name(){
+	char *name_ptr, input_char='\n';
+	while(input_char == '\n')
+		scanf("%c", &input_char);
 
+	name_ptr = (char *) &(player.name);
+	while(input_char != '\n'){
+		*name_ptr = input_char;
+		scanf("%c", &input_char);
+		name_ptr++;
+	}
+	*name_ptr = 0;
+}
