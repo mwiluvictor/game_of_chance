@@ -154,3 +154,33 @@ void update_player_data(){
 	write(fd, &(player.name), 100);
 	close(fd);
 }
+
+
+//this function displays the current high score and the name of the person who set the high score.
+void show_highscore(){
+	unsigned int top_score = 0;
+	char top_name[100];
+	struct user entry;
+	int fd;
+
+	printf("\n===========| HIGH SCORE |===========\n");
+	fd = open(DATAFILE, O_RDONLY);
+	if(fd == -1)
+		fatal("in show_highscore() while opening file.");
+	
+	while(read(fd, &entry, sizeof(struct user)) > 0){
+		if(entry.highscore > top_score){
+			top_score = entry.highscore;
+			strcpy(top_name, entry.name);
+		}
+	}
+	close(fd);
+	if(top_score > player.highscore)
+		printf("%s has the high score of %u credits.\n", top_name, top_score);
+	else
+		printf("You currently have the high score of %u credits.\n", player.highscore);
+	printf("=======================================================\n\n");
+}
+
+
+
