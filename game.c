@@ -2,9 +2,14 @@
 #include <string.h>
 #include <time.h>
 #include <stdlib.h>
+#include <fcntl.h>
+#include <sys/stat.h>
 #include "game.h" 
 
 
+
+//file to store user data
+#define DATAFILE "/var/game_of_chance.data"
 
 struct user{
 	int uid;
@@ -18,7 +23,6 @@ struct user{
 
 
 //Function Prototypes
-
 int get_player_data();
 void register_new_player();
 int pick_a_number();
@@ -30,6 +34,9 @@ void update_player_data();
 void jackpot();
 int take_wager(int, int);
 void play_the_game();
+void print_cards(char *, char *, int);
+void fatal(char *);
+
 
 
 //Global Variable
@@ -62,13 +69,16 @@ int main(){
 		if((choice < 1 || choice > 7))
 			printf("\n Error: The entered number %d is an invalid selection.\n\n", choice);
 		else if(choice < 4){
-			if(choice == 1)
-				player.current_game = pick_a_number;
-			else if(choice == 2)
-				player.current_game = dealer_no_match;
-			else 
-				player.current_game = find_the_ace;
-			last_game = choice;	
+			if(choice != last_game){
+				if(choice == 1)
+					player.current_game = pick_a_number;
+				else if(choice == 2)
+					player.current_game = dealer_no_match;
+				else 
+					player.current_game = find_the_ace;
+				last_game = choice;	
+			}
+			play_the_game();
 		}
 		else if(choice == 4)
 			show_highscore();
@@ -419,3 +429,24 @@ void play_the_game(){
 	}
 
 }
+
+
+
+//this function prints the 3 cards for the Find the Ace game.
+void print_cards(char *message, char *cards, int user_pick){
+	int i;
+
+	printf("\n\t*** %s ***\n", message);
+	printf("	\t._.\t._.\t._.\n");
+	printf("Cards:\t|%c|\t|%c|\t|%c|\n\t", cards[0], cards[1], cards[2]);
+	
+	if(user_pick == -1)
+		printf("1 \t 2 \t 3\n");
+	else{
+		for(i=0; i < user_pick; i++)
+			printf("\t");
+		printf(" ^-- your pick\n");
+	}
+}
+
+
