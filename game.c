@@ -27,7 +27,8 @@ int find_the_ace();
 void show_highscore();
 void input_name();
 void update_player_data();
-void jackpot()
+void jackpot();
+int take_wager(int, int);
 
 
 //Global Variable
@@ -371,3 +372,21 @@ int find_the_ace(){
 
 
 
+//this function inputs wagers for both the No Match Dealer and Find the Ace games.
+int take_wager(int available_credits, int previous_wager){
+	int wager, total_wager;	
+
+	printf("How many of your %d credits do you want to wager? ", available_credits);
+	scanf("%d", &wager);
+	if(wager < 1){
+		printf("Nice try, but you must wager a positive number!\n");
+		return -1;
+	}
+	total_wager = previous_wager + wager;
+	if(total_wager > available_credits){
+		printf("Your total wager of %d is more than you have!\n", total_wager);
+		printf("You only have %d available credits, try again.\n", available_credits);
+		return -1;
+	}
+	return wager;
+}
