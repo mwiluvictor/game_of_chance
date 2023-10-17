@@ -283,3 +283,91 @@ int dealer_no_match(){
 
 
 
+
+//this is the Find the Ace game
+int find_the_ace(){
+	int i, ace, total_wager;
+	int invalid_choice, pick = -1, wager_one = -1, wager_two = -1;
+	char choice_two, cards[3] = {'X','X','X'};
+
+	ace = rand()%3;
+
+	printf("******* Find the Ace *******\n");
+	printf("In this game, you can wager up to all of your credits.\n");
+	printf("Three cards will be dealt out, two queens and one ace.\n");
+	printf("If you find the ace, you will win your wager.\n");
+	printf("After choosing a card, one of the queens will be revealed.\n");
+	printf("At this point, you may either select a different card or\n");
+	printf("increase your wager.\n\n");
+
+	if(player.credits == 0){
+		printf("You don't have any credits to wager!\n\n");
+		return -1;
+	}
+	
+	while(wager == -1)
+		wager_one = take_wager(player.credits, 0);
+
+	print_cards("Dealing cards", cards, -1);
+	pick = -1;
+	while((pick < 1) || (pick > 3)){
+		printf("Select a card: 1, 2, or 3 ");
+		scanf("%d", &pick);
+	}
+	pick--;
+	i=0;
+	while(i == ace || i == pick)
+		i++;
+	cards[i] = 'Q';
+	print_cards("Revealing a queen", cards, pick);
+	
+	invalid_choice = 1;
+	while(invalid_choice){
+		printf("Would you like to:[c]hange your pick\tor\t[i]ncrease your wager?\n");
+		printf("Select c or i: ");
+		choice_two == '\n';
+		while(choice_two == '\n')
+			scanf("%c", &choice_two);
+		if(choice_two == 'i'){
+			invalid_choice=0;
+			while(wager_two == -1)
+				wager_two = take_wager(player.credit, wager_one);
+		}
+		if(choice_two == 'c'){
+			i = invalid_choice = 0;
+			while(i == pick || cards[i] == 'Q')
+				i++;
+			pick = i;
+			printf("Your card pick has been changed to card %d\n", pick + 1);
+		}
+	}
+
+	for(i=0; i < 3; i++){
+		if(ace == i)
+			cards[i] = 'A';
+		else
+			cards[i] = 'Q';
+	}
+	print_cards("End Result", cards, pick);
+
+	if(pick == ace){
+		printf("You have won %d credits from your first wager.\n", wager_one);
+		player.credits += wager_one;
+		if(wager_two != -1){
+			printf("and an additional %d credits from your second wager!\n", wager_two);
+			player.credits -= wager_two;
+		}
+	} else {
+		printf("You have lost %d credits from your first wager\n", wager_one);
+		player.credits -= wager_one;
+		if(wager_two != -1){
+			printf("and an additional %d credits from your second wager!\n", wager_two);
+			player.credits -= wager_two;
+		}
+	}
+	return 0;	
+}
+
+
+
+
