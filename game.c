@@ -81,7 +81,7 @@ int main(){
 			player.credits = 100;
 	}
 	update_player_data();
-	printf("\nYhanks for playing! Adios\n");
+	printf("\nThanks for playing! Adios\n");
 
 }
 
@@ -130,4 +130,27 @@ void register_new_player(){
 	printf("***Welcome to the Game of Chance***\n");
 	printf("You have been given %u credits.\n", player.credits);
 
+}
+
+
+//this function writes the player data to file updating the credits after the game.
+void update_player_data(){
+	int fd, i, read_uid;
+	char burnt_byte;
+
+	fd = open(DATAFILE, O_RDWR);
+	if(fd == -1)
+		fatal("in update_player_data() while opening file.")
+	
+	read(fd, &read_uid, 4);
+	while(read_uid != player.uid){
+		for(i=0; i < sizeof(struct user) - 4; i++)
+			read(fd, &read_uid, 1);
+		read(fd, &read_uid, 4);
+	}
+
+	write(fd, &(player.credits), 4);
+	write(fd, &(player.highscore), 4);
+	write(fd, &(player.name), 100);
+	close(fd);
 }
