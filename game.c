@@ -27,7 +27,7 @@ int find_the_ace();
 void show_highscore();
 void input_name();
 void update_player_data();
-
+void jackpot()
 
 
 //Global Variable
@@ -229,3 +229,10 @@ int pick_a_number(){
 
 	return 0;
 }
+
+//this function awards 100 credits for the Pick a Number game.
+void jackpot(){
+	printf("*+*+*+*+*+* JACKPOT *+*+*+*+*+*\n");
+	printf("You have won the jackpot of 100 credits.\n");
+	player.credits += 100;
+} 
