@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <sys/stat.h>
-#include "game.h" 
+#include <unistd.h>
 
 
 
@@ -46,7 +46,7 @@ struct user player;
 
 //Main Function
 int main(){
-	int choice, last_game;
+	int choice, last_game = 9999;
 	srand(time(0));
 
 	if(get_player_data()==-1)
@@ -88,9 +88,10 @@ int main(){
 			input_name();
 			printf("Your name has been changed.\n\n");
 		}
-		else if(choice == 6)
+		else if(choice == 6){
 			printf("\nYour account has been reset with 100 credits.\n\n");
 			player.credits = 100;
+		}
 	}
 	update_player_data();
 	printf("\nThanks for playing! Adios\n");
@@ -133,6 +134,9 @@ void register_new_player(){
 	printf("Please enter your name: \n");
 	input_name();
 
+	player.uid = getuid();
+	player.highscore = player.credits = 100;
+
 	fd = open(DATAFILE, O_WRONLY|O_CREAT|O_APPEND, S_IRUSR|S_IWUSR);
 	if(fd == -1)
 		fatal("in register_new_player() while opening file");
@@ -148,16 +152,16 @@ void register_new_player(){
 //this function writes the player data to file updating the credits after the game.
 void update_player_data(){
 	int fd, i, read_uid;
-	char burnt_byte;
+	char burned_byte;
 
 	fd = open(DATAFILE, O_RDWR);
 	if(fd == -1)
-		fatal("in update_player_data() while opening file.")
+		fatal("in update_player_data() while opening file.");
 	
 	read(fd, &read_uid, 4);
 	while(read_uid != player.uid){
 		for(i=0; i < sizeof(struct user) - 4; i++)
-			read(fd, &read_uid, 1);
+			read(fd, &burned_byte, 1);
 		read(fd, &read_uid, 4);
 	}
 
@@ -224,7 +228,7 @@ int pick_a_number(){
 	winning_number = (rand()%20) + 1;
 
 	if(player.credits < 10){
-		printf("You only have %u credits. That is not enough to play!\n\n"player.credits);
+		printf("You only have %u credits. That is not enough to play!\n\n", player.credits);
 		return -1;
 	}
 	
@@ -254,6 +258,7 @@ void jackpot(){
 //this is the No Match Dealer game.
 int dealer_no_match(){
 	int i, j, wager = -1, match =-1;
+	int numbers[16];
 
 	printf("\n::::::: No Match Dealer :::::::\n");
 	printf("In this game, you can wager up to all of your credits.\n");
@@ -270,14 +275,14 @@ int dealer_no_match(){
 	printf("\t\t::: Dealing out 16 random numbers :::\n");
 	for(i=0; i < 16; i++){
 		numbers[i] = rand() % 100;
-		printf("%2d\t, numbers[i]");
+		printf("%d\t", numbers[i]);
 		if(i%8 == 7)
 			printf("\n");
 	}
 	for(i=0; i < 15; i++){
 		j = i +1;
 		while(j < 16){
-			if(numbers[i] == numbers[j]
+			if(numbers[i] == numbers[j])
 				match = numbers[i];
 			j++;
 		}
@@ -298,7 +303,7 @@ int dealer_no_match(){
 
 //this is the Find the Ace game
 int find_the_ace(){
-	int i, ace, total_wager;
+	int i, ace;
 	int invalid_choice, pick = -1, wager_one = -1, wager_two = -1;
 	char choice_two, cards[3] = {'X','X','X'};
 
@@ -317,7 +322,7 @@ int find_the_ace(){
 		return -1;
 	}
 	
-	while(wager == -1)
+	while(wager_one == -1)
 		wager_one = take_wager(player.credits, 0);
 
 	print_cards("Dealing cards", cards, -1);
@@ -337,13 +342,13 @@ int find_the_ace(){
 	while(invalid_choice){
 		printf("Would you like to:[c]hange your pick\tor\t[i]ncrease your wager?\n");
 		printf("Select c or i: ");
-		choice_two == '\n';
+		choice_two = '\n';
 		while(choice_two == '\n')
 			scanf("%c", &choice_two);
 		if(choice_two == 'i'){
 			invalid_choice=0;
 			while(wager_two == -1)
-				wager_two = take_wager(player.credit, wager_one);
+				wager_two = take_wager(player.credits, wager_one);
 		}
 		if(choice_two == 'c'){
 			i = invalid_choice = 0;
@@ -407,11 +412,10 @@ int take_wager(int available_credits, int previous_wager){
 //this function contains a loop to allow the current game to be played again.
 void play_the_game(){
 	int play_again = 1;
-	int(*game)();
 	char selection;
 
 	while(play_again){
-		printf("\n[DEBUG] current_game pointer @ 0x%08x\n", player.current_game);
+		//printf("\n[DEBUG] current_game pointer @ 0x%x\n", &player.current_game);
 		if(player.current_game() != -1){
 			if(player.credits > player.highscore)
 				player.highscore = player.credits;
