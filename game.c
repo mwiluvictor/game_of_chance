@@ -415,7 +415,6 @@ void play_the_game(){
 	char selection;
 
 	while(play_again){
-		//printf("\n[DEBUG] current_game pointer @ 0x%x\n", &player.current_game);
 		if(player.current_game() != -1){
 			if(player.credits > player.highscore)
 				player.highscore = player.credits;
@@ -442,7 +441,7 @@ void print_cards(char *message, char *cards, int user_pick){
 
 	printf("\n\t*** %s ***\n", message);
 	printf("	\t._.\t._.\t._.\n");
-	printf("Cards:\t|%c|\t|%c|\t|%c|\n\t", cards[0], cards[1], cards[2]);
+	printf("Cards:	\t|%c|\t|%c|\t|%c|\n\t", cards[0], cards[1], cards[2]);
 	
 	if(user_pick == -1)
 		printf("1 \t 2 \t 3\n");
